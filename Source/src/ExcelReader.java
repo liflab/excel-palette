@@ -1,4 +1,4 @@
-package customprocessors;
+package ca.uqac.lif.cep.excelReader;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,12 +16,13 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Permet de récupérer le contenu d'un fichier Excel pour faire des tests sur
- * les valeurs Contenues dans les cellules Ce processeur prend en entrée le nom
+ * les valeurs contenues dans les cellules. Ce processeur prend en entrée le nom
  * d'un fichier Excel (.xls) Et renvoi en sortie le contenu (linéaire) de
- * celui-ci, ligne par lign
+ * celui-ci, ligne par ligne
  * 
  * @author Nicolas Taffoureau
  */
@@ -29,18 +30,38 @@ import org.apache.poi.ss.usermodel.Sheet;
 public class ExcelReader extends Source
 {
   String m_file;
+  int m_column ;
 
-  public ExcelReader(String e)
+  
+  //Constructeur de base
+  public ExcelReader(String path) throws ExcelReaderExceptions 
   {
     super(1);
-    m_file = e;
+    m_file = path;
     
-    if (!e.endsWith("xls"))
+    if (!path.endsWith("xls"))
     {
-      System.out.println("Le fichier n'est pas valide");
+      throw new ExcelReaderExceptions("Format de fichier incorrect !");
     }
   }
 
+  //Possibilité de retourner juste la colonne donnée en paramètre
+  public ExcelReader(String path, int column) throws ExcelReaderExceptions 
+  {
+    super(1);
+    m_file = path;
+    m_column = column;
+    
+    if (!path.endsWith("xls"))
+    {
+      throw new ExcelReaderExceptions("Format de fichier incorrect !");
+    }
+    
+    if(m_column < 1) 
+    {
+      throw new ExcelReaderExceptions("Numéro de colonne invalide !");
+    }
+  }
 
   @Override
   @SuppressWarnings("resource")
@@ -57,15 +78,33 @@ public class ExcelReader extends Source
       // On crée un FileInputStream correspondant au nom de la feuille rentré en
       // parametre
       nomFichier = new FileInputStream(m_file);
+      
+      //On crée un objet feuille
+      Sheet sheet1 ;
+       
+      if (m_file.endsWith("xls"))
+      {
+        // On définie un nouveau Workbook de type HSSF
+        HSSFWorkbook wb;
 
-      // On définie un nouveau Workbook
-      HSSFWorkbook wb;
+        // Le workbook est associé à la feuille passée en parametre
+        wb = new HSSFWorkbook(nomFichier);
+        
+        // On récupère la feuille courante
+        sheet1 = wb.getSheetAt(0);
+      }
+      
+      else
+      {
+        // On définie un nouveau Workbook de type XSSF
+        XSSFWorkbook wb;
 
-      // Le workbook est associé à la feuille passée en parametre
-      wb = new HSSFWorkbook(nomFichier);
-
-      // On récupère la feuille courante
-      Sheet sheet1 = wb.getSheetAt(0);
+        // Le workbook est associé à la feuille passée en parametre
+        wb = new XSSFWorkbook(nomFichier);
+        
+        // On récupère la feuille courante
+        sheet1 = wb.getSheetAt(0);
+      }
 
       // Pour parcourir l'ArrayList
       int i = 0;
@@ -160,7 +199,9 @@ public class ExcelReader extends Source
   @Override
   public Processor duplicate(boolean with_state)
   {
-    return new ExcelReader(m_file);
+   
+      return new ExcelReader(m_file);
+    
   }
 
   public static void main(String[] args) throws Exception
