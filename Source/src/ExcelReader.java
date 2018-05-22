@@ -1,4 +1,4 @@
-package ca.uqac.lif.cep.excelReader;
+package customprocessors;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,35 +21,26 @@ import org.apache.poi.ss.usermodel.Sheet;
  * Permet de récupérer le contenu d'un fichier Excel pour faire des tests sur
  * les valeurs Contenues dans les cellules Ce processeur prend en entrée le nom
  * d'un fichier Excel (.xls) Et renvoi en sortie le contenu (linéaire) de
- * celui-ci, ligne par ligne
+ * celui-ci, ligne par lign
  * 
  * @author Nicolas Taffoureau
  */
 
 public class ExcelReader extends Source
 {
-  String m_events;
+  String m_file;
 
-  public ExcelReader()
+  public ExcelReader(String e)
   {
     super(1);
-  }
-
-  public ExcelReader addEvent(String e)
-  {
-
+    m_file = e;
+    
     if (!e.endsWith("xls"))
     {
       System.out.println("Le fichier n'est pas valide");
     }
-    else
-    {
-      m_events = e;
-    }
-
-    return this;
-
   }
+
 
   @Override
   @SuppressWarnings("resource")
@@ -65,7 +56,7 @@ public class ExcelReader extends Source
 
       // On crée un FileInputStream correspondant au nom de la feuille rentré en
       // parametre
-      nomFichier = new FileInputStream(m_events);
+      nomFichier = new FileInputStream(m_file);
 
       // On définie un nouveau Workbook
       HSSFWorkbook wb;
@@ -169,14 +160,14 @@ public class ExcelReader extends Source
   @Override
   public Processor duplicate(boolean with_state)
   {
-    return new ExcelReader();
+    return new ExcelReader(m_file);
   }
 
   public static void main(String[] args) throws Exception
   {
 
-    ExcelReader test = new ExcelReader();
-    test.addEvent("C:\\Users\\Taffoureau\\Music\\Excel Tests\\workbook.xls");
+    ExcelReader test = new ExcelReader("C:\\Users\\Taffoureau\\Music\\Excel Tests\\workbook.xls");
+
 
     Doubler doubler = new Doubler();
     Connector.connect(test, doubler);
