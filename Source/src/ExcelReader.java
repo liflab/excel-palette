@@ -7,8 +7,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Queue;
 
-import basic.PipingUnary.Doubler;
-import ca.uqac.lif.cep.*;
+import ca.uqac.lif.cep.Processor;
 import ca.uqac.lif.cep.tmf.Source;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -17,6 +16,8 @@ import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+
 
 /**
  * Permet de récupérer le contenu d'un fichier Excel pour faire des tests sur
@@ -30,7 +31,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class ExcelReader extends Source
 {
   String m_file;
-  int m_column = -1 ;
+  int m_column = -1;
   ArrayList<Integer> m_columntab = new ArrayList<Integer>();
 
   
@@ -40,45 +41,31 @@ public class ExcelReader extends Source
     super(1);
     m_file = path;
     
+  //On verifie que le format du fichier est correct//On verifie que le format du fichier est correct
     if (!path.endsWith("xls"))
     {
       throw new ExcelReaderExceptions("Format de fichier incorrect !");
     }
   }
 
-  //Possibilité de retourner juste la colonne donnée en paramètre
-  public ExcelReader(String path, int column) throws ExcelReaderExceptions 
-  {
-    super(1);
-    m_file = path;
-    m_column = column;
-    
-    if (!path.endsWith("xls"))
-    {
-      throw new ExcelReaderExceptions("Format de fichier incorrect !");
-    }
-    
-    if(m_column < 1) 
-    {
-      throw new ExcelReaderExceptions("Numéro de colonne invalide !");
-    }
-  }
-  
-  
+  //Possibilité de retourner juste la ou les colonnes données en paramètre
   public ExcelReader(String path, int... args) throws ExcelReaderExceptions 
   {
     super(1) ;
     m_file = path;
+    m_column = 0 ;
     
+    //On verifie que le format du fichier est correct
     if (!path.endsWith("xls"))
     {
       throw new ExcelReaderExceptions("Format de fichier incorrect !");
     }
     
+    //On verifie que les numéros de colonnes sont valides
     for (int i = 0; i < args.length; i++) 
     {
       m_columntab.add(args[i]);
-      if(args[i] < 1) 
+      if(args[i] < 0) 
       {
         throw new ExcelReaderExceptions("Numéro de colonne invalide !");
       }
@@ -194,7 +181,7 @@ public class ExcelReader extends Source
       ArrayList<Object> contenuFeuille = new ArrayList<Object>();
       
       //Si aucun numéro de colonne n'est passé en paramètre
-      if(m_column == -1) 
+      if(m_column == -1)
       {
         
         // On parcoure les colonnes
@@ -242,26 +229,6 @@ public class ExcelReader extends Source
         }
       }
       
-      else
-      {
-        for(Row r : sheet1) 
-        {
-          //On récupère les valeurs de la colonne passée en paramètre
-          Cell cell = r.getCell(m_column);
-            if(cell != null) 
-            {
-              //On ajoute les valeurs dans une ArrayList
-              ajoutValeur(cell, contenuFeuille);
-
-            // On ajoute le contenu de l'ArrayList courante à l'output
-            outputs.add(new Object[] { contenuFeuille.get(i) });
-
-            // On parcoure l'ArrayList
-            i++;
-            
-            }
-        }
-      }
     }
     // Si le fichier n'existe pas
     catch (FileNotFoundException e)
@@ -284,26 +251,5 @@ public class ExcelReader extends Source
       return new ExcelReader(m_file);
     
   }
-
-  public static void main(String[] args) throws Exception
-  {
-
-    ExcelReader test = new ExcelReader("C:\\Users\\Taffoureau\\Music\\Excel Tests\\workbook.xls", 4);
-
-
-    Doubler doubler = new Doubler();
-    Connector.connect(test, doubler);
-    Pullable p = doubler.getPullableOutput();
-
-    for (int i = 0; i < 3000; i++)
-    {
-      int x = (Integer) p.pull();
-
-      // On affiche à l'écran
-      System.out.println("Le fichier contient: " + x);
-
-    } // On ferme le for
-
-  }// On ferme le main
 
 }// On ferme la classe
