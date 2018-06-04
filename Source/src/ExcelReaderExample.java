@@ -10,8 +10,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 
+import basic.PipingUnary.Doubler;
+import ca.uqac.lif.cep.Connector;
+import ca.uqac.lif.cep.Pullable;
+
 /**
- * Permet de créer un fichier Excel pour tester le processeur ExcelReader
+ * Permet de créer un fichier Excel rempli de valeurs numériques pour tester le processeur ExcelReader
  **/
 
 public class ExcelReaderTests
@@ -55,13 +59,20 @@ public class ExcelReaderTests
       } // On ferme le second for
     } // On ferme le premier for
 
+    ExcelReaderExceptions ExcelExceptions = null;
     // On écrit le contenu dans le fichier de sortie
-    try (OutputStream fileOut = new FileOutputStream(
-        "C:\\Users\\Taffoureau\\Music\\Excel Tests\\workbook.xls"))
-    {
-      wb.write(fileOut);
-    }
-
+    try {OutputStream fileOut = new FileOutputStream(
+        "C:\\Users\\Taffoureau\\Music\\Excel Tests\\workbook.xls");
+   
+          {
+            wb.write(fileOut);
+          } 
+    
+        } catch (ExcelReaderExceptions e) {
+          ExcelExceptions = e;
+          throw e;
+        }
+    finally {
     // Objets permettant de formatter le contenu d'une cellule
     DataFormatter formatter = new DataFormatter();
 
@@ -93,6 +104,24 @@ public class ExcelReaderTests
 
       } // On ferme le second for
     } // On ferme le premier for
+    
 
+    ExcelReader test = new ExcelReader("C:\\Users\\Taffoureau\\Music\\Excel Tests\\workbook.xls",0,2,3);
+
+
+    Doubler doubler = new Doubler();
+    Connector.connect(test, doubler);
+    Pullable p = doubler.getPullableOutput();
+
+    for (int i = 0; i < 20; i++)
+    {
+      int x = (Integer) p.pull();
+
+      // On affiche à l'écran
+      System.out.println("Le fichier contient: " + x);
+
+    } // On ferme le for
+    
+    } // On ferme le finally
   } // On ferme le main
 } // On ferme la classe
