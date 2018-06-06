@@ -20,7 +20,7 @@ Follow the instructions given at [this page](https://github.com/liflab/beepbeep-
 
 ## How it's work ?
 
-Basically, if you want to extract the data of an Excel file, you need (after import the corrects packages), create an new processor ExcelReader, who have two different constructors :
+Basically, if you want to extract the data of an Excel file, you need (after import the correct packages), create an new processor ExcelReader, who have two differents constructors :
 
 The first constructor take in input only the name of the Excel file :
 ```
