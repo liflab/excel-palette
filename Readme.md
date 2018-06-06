@@ -14,7 +14,46 @@ The palette now contain the following files :
 
 - `ExcelReaderExceptions.java`: Exceptions.
 
+## How to build the palette ?
+
+Follow the instructions given at [this page](https://github.com/liflab/beepbeep-3-palettes)
+
+## How it's work ?
+
+Basically, if you want to extract the data of an Excel file, you need (after import the corrects packages), create an new processor ExcelReader, who have two different constructors :
+
+The first constructor take in input only the name of the Excel file :
+```
+ ExcelReader test = new ExcelReader("absolutPathOfYourFile");
+```
+The second constructor take in input the name of the file, and one or more columns you want to extract :
+```
+ExcelReader test = new ExcelReader("absolutPathOfYourFile", 4);
+```
+or
+```
+ExcelReader test = new ExcelReader("absolutPathOfYourFile", 4, 5, 7, 54);
+```
+
+You can now connect the output of this processor with others, like `doubler` for example.
+Here's an example of the extraction of the third column, containing 10 rows of numbers :
+
+```
+ExcelReader Exceltest = new ExcelReader("absolutPathOfYourFile", 2);
+Doubler doubler = new Doubler();
+Connector.connect(Exceltest, doubler);
+Pullable p = doubler.getPullableOutput();
+
+    for (int i = 0; i < 10; i++)
+    {
+      int x = (Integer) p.pull();
+      System.out.println("Le fichier contient: " + x);
+    }
+```
+
+
+
 About the authors                                                  {#about}
 -----------------
 
-This palette was written by @ntaff and Valentin Ramos.
+This palette was written by Nicolas Taffoureau and Valentin Ramos.
