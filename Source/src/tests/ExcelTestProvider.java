@@ -20,7 +20,7 @@ public interface ExcelTestProvider {
      * @param fileName : nom du fichier à charger
      * @return Retourne une instance du Workbook chargé depuis le fichier
      */
-    Workbook openSampleWorkbook(String fileName);
+    Workbook openWorkbook(String fileName);
 
     /**
      * Permet de créer un workbook
