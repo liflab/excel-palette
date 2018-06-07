@@ -9,10 +9,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-/**
- * Common superclass for testing implementations of
- *  {@link org.apache.poi.ss.usermodel.Cell}
- */
 public abstract class BaseTestExcelReader {
 
   protected static ExcelTestProvider _excelTestProvider;
@@ -64,6 +60,4 @@ public abstract class BaseTestExcelReader {
       
       
     }
-
-   
 }
