@@ -17,8 +17,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-
-
 /**
  * Permet de récupérer le contenu d'un fichier Excel pour faire des tests sur
  * les valeurs contenues dans les cellules. Ce processeur prend en entrée le nom
@@ -41,7 +39,7 @@ public class ExcelReader extends Source
     super(1);
     m_file = path;
     
-  //On verifie que le format du fichier est correct//On verifie que le format du fichier est correct
+  //On verifie que le format du fichier est correct
     if (!path.endsWith("xls"))
     {
       throw new ExcelReaderExceptions("Format de fichier incorrect !");
@@ -49,7 +47,7 @@ public class ExcelReader extends Source
   }
 
   //Possibilité de retourner juste la ou les colonnes données en paramètre
-  public ExcelReader(String path, int... args) throws ExcelReaderExceptions 
+  public ExcelReader(String path, int... colonnes) throws ExcelReaderExceptions 
   {
     super(1) ;
     m_file = path;
@@ -62,20 +60,25 @@ public class ExcelReader extends Source
     }
     
     //On verifie que les numéros de colonnes sont valides
-    for (int i = 0; i < args.length; i++) 
+    for (int i = 0; i < colonnes.length; i++) 
     {
-      m_columntab.add(args[i]);
-      if(args[i] < 0) 
+      m_columntab.add(colonnes[i]);
+      if(colonnes[i] < 0) 
       {
         throw new ExcelReaderExceptions("Numéro de colonne invalide !");
       }
     }
   }
-
  
-  @SuppressWarnings("resource")
+
   
-  //Fonction ajoutant les valeurs du tableau dans une ArrayList
+  /**
+   * Ajoute les valeurs voulant être recupérées dans une arraylist
+   *
+   * @param : cell : cellule voulant être recupérée
+   * @param : contenuFeuille : Arraylist où va être stockée la valeur
+   * @return : void
+   */
   public void ajoutValeur (Cell cell, ArrayList<Object> contenuFeuille ) {
     
     // Tests sur le type de texte que contient une cellule
@@ -132,6 +135,7 @@ public class ExcelReader extends Source
     
   }
   
+
   @Override
 
   public boolean compute(Object[] inputs, Queue<Object[]> outputs)
@@ -155,7 +159,7 @@ public class ExcelReader extends Source
         // On définie un nouveau Workbook de type HSSF
         HSSFWorkbook wb;
 
-        // Le workbook est associé à la feuille passée en parametre
+        // Le workbook est associé au fichier passé en parametre
         wb = new HSSFWorkbook(nomFichier);
         
         // On récupère la feuille courante
