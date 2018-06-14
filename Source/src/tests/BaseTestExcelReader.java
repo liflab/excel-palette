@@ -5,30 +5,35 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
+import java.io.File;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 public abstract class BaseTestExcelReader {
-
-  protected static ExcelTestProvider _excelTestProvider;
-
-    /**
-     * @param excelTestProvider : Objet fournissant des données de test
-     * @return void
-     */
-    public BaseTestExcelReader(ExcelTestProvider excelTestProvider) {
-      _excelTestProvider = excelTestProvider;
-    }
     
+    public BaseTestExcelReader()
+    {
+      // TODO Auto-generated constructor stub
+    }
+
     @BeforeClass
+    /**
+     * Fonction executée avant les tests : On crée une feuille de test contenant des données sous forme de nombre
+     * @param : null
+     * @return : void
+     */
     public static void setUpBeforeClass() throws Exception {
       
       final int nbRow = 5;
       final int nbColumns = 5;
+      String path = "Feuille_de_test.xls";
 
-      Workbook wb = _excelTestProvider.createWorkbook();
-      Sheet sheet = wb.createSheet("Feuille de test");
+     // Workbook wb = _excelTestProvider.createWorkbook();
+      Workbook wb = new HSSFWorkbook();
+      Sheet sheet = wb.createSheet(path);
       int k = 0;
 
       for (int i = 0; i < nbRow; i++)
@@ -44,20 +49,28 @@ public abstract class BaseTestExcelReader {
     }
     
     @AfterClass
+    /**
+     * Fonction executée après les tests : On supprime la feuille de test
+     * @param : null
+     * @return : void
+     */
     public static void setUpAfterClass() throws Exception {
       
-      
+      File feuilleTest = new File("Feuille_de_test.xls");
+      feuilleTest.delete();
     }
     
     @Before
-    public static void setUpBefore() throws Exception {
+    public void setUpBefore() throws Exception {
       
       
     }
 
     @After
-    public static void setUpAfter() throws Exception {
+    public void setUpAfter() throws Exception {
       
       
     }
+
+   
 }
