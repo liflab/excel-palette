@@ -10,118 +10,244 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 
-import basic.PipingUnary.Doubler;
-import ca.uqac.lif.cep.Connector;
 import ca.uqac.lif.cep.Pullable;
 
 /**
  * Permet de créer un fichier Excel rempli de valeurs numériques pour tester le processeur ExcelReader
  **/
 
-public class ExcelReaderTests
+public class ExcelReaderExample
 {
   @SuppressWarnings("resource")
-
-  public static void main(String[] args) throws Exception
-  {
-
+  
+  public static Workbook createXLSnum() {
+    
     // Constantes permettant de modifier le nombre de lignes et de colonnes du
     // fichier
-    final int nbLignes = 10;
-    final int nbColonnes = 5;
+    final int nbRow = 5;
+    final int nbColumns = 5;
 
     // On créer un nouveau classeur
     Workbook wb = new HSSFWorkbook();
 
-    // On créer une nouvelle feuille
-    Sheet sheet = wb.createSheet("Nouvelle Feuille");
+    // On créer des nouvelles feuilles
+    Sheet num = wb.createSheet("Numeric");
+ 
 
     // Compteur de cellules
     int k = 0;
 
     // On crée X lignes
-    for (int i = 0; i < nbLignes; i++)
+    for (int i = 0; i < nbRow; i++)
     {
 
-      // On créer une nouvelle ligne
-      Row row1 = sheet.createRow(i);
+      // On créer des nouvelles lignes
+      Row rowNum = num.createRow(i);
 
       // On créer X colonnes
-      for (int j = 0; j < nbColonnes; j++)
+      for (int j = 0; j < nbColumns; j++)
       {
 
         // On incrémente le compteur de cellule avant chaque création de cellule
         k++;
 
-        // On créer une cellule et on lui ajoute du contenu
-        row1.createCell(j).setCellValue(k);
+        // On créer des cellules et on leur ajoute du contenu
+        rowNum.createCell(j).setCellValue(k);
+    
 
       } // On ferme le second for
     } // On ferme le premier for
-
-    ExcelReaderExceptions ExcelExceptions = null;
-    // On écrit le contenu dans le fichier de sortie
-    try {OutputStream fileOut = new FileOutputStream(
-        "C:\\Users\\Taffoureau\\Music\\Excel Tests\\workbook.xls");
-   
-          {
-            wb.write(fileOut);
-          } 
     
-        } catch (ExcelReaderExceptions e) {
-          ExcelExceptions = e;
-          throw e;
-        }
-    finally {
-    // Objets permettant de formatter le contenu d'une cellule
-    DataFormatter formatter = new DataFormatter();
+    return wb ;
+  }
+  
+  
+  public static Workbook createXLSstring() {
+    
+    // Constantes permettant de modifier le nombre de lignes et de colonnes du
+    // fichier
+    final int nbRow = 5;
+    final int nbColumns = 5;
 
-    // On récupère la feuille courante
-    Sheet sheet1 = wb.getSheetAt(0);
+    // On créer un nouveau classeur
+    Workbook wb = new HSSFWorkbook();
 
-    // On parcoure les colonnes
-    for (Row row1 : sheet1)
+    // On créer des nouvelles feuilles
+    Sheet string = wb.createSheet("String");
+ 
+
+    // Compteur de cellules
+    int k = 0;
+
+    // On crée X lignes
+    for (int i = 0; i < nbRow; i++)
     {
 
-      // On parcoure les lignes
-      for (Cell cell : row1)
+      // On créer des nouvelles lignes
+      Row rowString = string.createRow(i);
+
+      // On créer X colonnes
+      for (int j = 0; j < nbColumns; j++)
       {
 
-        // On récupère la localisation de la cellule
-        CellReference cellRef = new CellReference(row1.getRowNum(), cell.getColumnIndex());
+        // On incrémente le compteur de cellule avant chaque création de cellule
+        k++;
 
-        // On affiche la localisation de la cellule
-        System.out.print(cellRef.formatAsString());
+        // On créer des cellules et on leur ajoute du contenu
 
-        // Pour séparer la localisation de la cellule de son contenu
-        System.out.print(" - ");
-
-        // On recupère le contenu brut de la cellule
-        String text = formatter.formatCellValue(cell);
-
-        // On affiche ce contenu
-        System.out.println(text);
+        rowString.createCell(j).setCellValue(String.valueOf(Character.toChars('a' + (k-1))));
+    
 
       } // On ferme le second for
     } // On ferme le premier for
     
+    return wb ;
+  }
+  public static void readSheetNum(String path)throws Exception
+  {
+    
+  
+  Workbook wb = createXLSnum();
+  ExcelReaderExceptions ExcelExceptions = null;
+  // On écrit le contenu dans le fichier de sortie
+  try {OutputStream fileOut = new FileOutputStream(path);
+ 
+        {
+          wb.write(fileOut);
+        } 
+  
+      } catch (ExcelReaderExceptions e) {
+        ExcelExceptions = e;
+        throw e;
+      }
+  finally {
+  // Objets permettant de formatter le contenu d'une cellule
+  DataFormatter formatter = new DataFormatter();
 
-    ExcelReader test = new ExcelReader("C:\\Users\\Taffoureau\\Music\\Excel Tests\\workbook.xls",0,2,3);
+  // On récupère la feuille courante
+  Sheet sheetNum = wb.getSheetAt(0);
 
+  // On parcoure les colonnes
+  for (Row row1 : sheetNum)
+  {
 
-    Doubler doubler = new Doubler();
-    Connector.connect(test, doubler);
-    Pullable p = doubler.getPullableOutput();
-
-    for (int i = 0; i < 20; i++)
+    // On parcoure les lignes
+    for (Cell cell : row1)
     {
-      int x = (Integer) p.pull();
+
+      // On récupère la localisation de la cellule
+      CellReference cellRef = new CellReference(row1.getRowNum(), cell.getColumnIndex());
+
+      // On affiche la localisation de la cellule
+      System.out.print(cellRef.formatAsString());
+
+      // Pour séparer la localisation de la cellule de son contenu
+      System.out.print(" - ");
+
+      // On recupère le contenu brut de la cellule
+      String text = formatter.formatCellValue(cell);
+
+      // On affiche ce contenu
+      System.out.println(text);
+
+    } // On ferme le second for
+  } // On ferme le premier for
+  
+  System.out.println("\n-----------------------------------\n");
+
+ }
+}
+  
+  public static void readSheetString(String path)throws Exception
+  {
+    
+  Workbook wb = createXLSstring();
+  ExcelReaderExceptions ExcelExceptions = null;
+  // On écrit le contenu dans le fichier de sortie
+  try {OutputStream fileOut = new FileOutputStream(path);
+ 
+        {
+          wb.write(fileOut);
+        } 
+  
+      } catch (ExcelReaderExceptions e) {
+        ExcelExceptions = e;
+        throw e;
+      }
+  finally {
+  // Objets permettant de formatter le contenu d'une cellule
+  DataFormatter formatter = new DataFormatter();
+
+  // On récupère la feuille courante
+  Sheet sheetString = wb.getSheetAt(0);
+
+  // On parcoure les colonnes
+  for (Row row1 : sheetString)
+  {
+
+    // On parcoure les lignes
+    for (Cell cell : row1)
+    {
+
+      // On récupère la localisation de la cellule
+      CellReference cellRef = new CellReference(row1.getRowNum(), cell.getColumnIndex());
+
+      // On affiche la localisation de la cellule
+      System.out.print(cellRef.formatAsString());
+
+      // Pour séparer la localisation de la cellule de son contenu
+      System.out.print(" - ");
+
+      // On recupère le contenu brut de la cellule
+      String text = formatter.formatCellValue(cell);
+
+      // On affiche ce contenu
+      System.out.println(text);
+
+    } // On ferme le second for
+  } // On ferme le premier for
+  
+  System.out.println("\n-----------------------------------\n");
+
+ }
+}
+  
+  public static void main(String[] args) throws Exception
+  {
+ 
+    
+
+    System.out.println("\n-----------------------------------\n");
+    readSheetNum("C:\\Users\\Taffoureau\\Music\\Excel Tests\\workbook1.xls");
+    System.out.println("\n-----------------------------------\n");
+    readSheetString("C:\\Users\\Taffoureau\\Music\\Excel Tests\\workbook2.xls");
+
+    
+    ExcelReader testNum = new ExcelReader("C:\\Users\\Taffoureau\\Music\\Excel Tests\\workbook1.xls");
+    Pullable p = testNum.getPullableOutput();
+
+    for (int i = 0; i < 10; i++)
+    {
+      double x = (Double) p.pull();
 
       // On affiche à l'écran
       System.out.println("Le fichier contient: " + x);
 
-    } // On ferme le for
+    } 
     
-    } // On ferme le finally
-  } // On ferme le main
-} // On ferme la classe
+    System.out.println("\n-----------------------------------\n");
+    
+    ExcelReader testString = new ExcelReader("C:\\Users\\Taffoureau\\Music\\Excel Tests\\workbook2.xls");
+    Pullable p2 = testString.getPullableOutput();
+
+    for (int i = 0; i < 10; i++)
+    {
+      String x = (String) p2.pull();
+
+      // On affiche à l'écran
+      System.out.println("Le fichier contient: " + x);
+
+    }
+   } // On ferme le main
+  } // On ferme la classe
+
