@@ -17,7 +17,7 @@ The palette now contain the following files :
 ## How to build the palette ?
 
 Follow the instructions given at [this page](https://github.com/liflab/beepbeep-3-palettes)
-You also need the Apache POI librairy .jar, you can download it at this page
+You also need the Apache POI librairy .jar
 
 ## How it's work ?
 
